@@ -10,5 +10,5 @@ AkSearch Solr core templates can be found in `/opt/aksearch`.
 Run with with e.g.:
 
 ```bash
-docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhcd/aksearch-solr
+docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhch/aksearch-solr
 ```
