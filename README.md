@@ -32,4 +32,4 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 
 For `import_auth.properties` do the same, just adjust what/where you mount accordingly.
 
-**Be aware in this configuration Solr works on port 8983**, which might require adjusting of the `solr.hosturl` configuration property in your import.properties file.
+**Be aware in this configuration Solr works on port 8983** which might require adjusting of the `solr.hosturl` configuration property in your import.properties file.
