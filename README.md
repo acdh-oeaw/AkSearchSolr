@@ -17,8 +17,11 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 
 Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
 
-* if you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`
-* if you want to import all files in a directory: `cd /opt/aksearch/harvest && ./batch-import-marc.sh -m -d pathToTheMarcDir`
+* If you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`.
+* If you want to import all files in a directory: `cd /opt/aksearch/harvest && ./batch-import-marc.sh -m -d pathToTheMarcDir`.  
+  Be aware the `batch-import-marc.sh` script writes logs into `pathToTheMarcDir/log` directory by default and fails if it's unable to create/write to this dir. If you run into such trouble consider using the `-z` switch to turn off logging to files (and you will still get log on the console and you can redirect it to a file).
+
+Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch/harvest/batch-import-marc-auth.sh`, `/opt/aksearch/import-marc-auth.sh` and others).
 
 ### Using own MARC import.properties
 
@@ -30,6 +33,6 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
   acdhch/aksearch-solr
 ```
 
-For `import_auth.properties` do the same, just adjust what/where you mount accordingly.
+Act accordingly for any other configuration file.
 
 **Be aware in this configuration Solr works on port 8983** which might require adjusting of the `solr.hosturl` configuration property in your import.properties file.
