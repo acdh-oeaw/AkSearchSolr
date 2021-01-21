@@ -13,7 +13,16 @@ Run with with e.g.:
 docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhch/aksearch-solr
 ```
 
-If you want to use your own MARC import config, mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g.:
+## Importing MARC data
+
+Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
+
+* if you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`
+* if you want to import all files in a directory: `cd /opt/aksearch/harvest && ./batch-import-marc.sh -m -d pathToTheMarcDir`
+
+### Using own MARC import.properties
+
+Just mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g.:
 
 ```bash
 docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores \
@@ -21,3 +30,6 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
   acdhch/aksearch-solr
 ```
 
+For `import_auth.properties` do the same, just adjust what/where you mount accordingly.
+
+Be aware Solr in this configuration Solr works on port 8983, which might require adjusting of the `solr.hosturl` configuration property in your import.properties file.
