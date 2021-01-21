@@ -13,9 +13,11 @@ Run with with e.g.:
 docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhch/aksearch-solr
 ```
 
-If you want to use your own MARC import config, mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g. (do it similarly for `import_auth.properties`):
+If you want to use your own MARC import config, mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g.:
 
 ```bash
-docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores -v pathToMyLocalImport.properties:/opt/localcfg/import/import.properties -e VUFIND_LOCAL_DIR=/opt/localcfg acdhch/aksearch-solr
+docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores \
+  -v pathToMyLocalImport.properties:/opt/localcfg/import/import.properties -e VUFIND_LOCAL_DIR=/opt/localcfg \
+  acdhch/aksearch-solr
 ```
 
