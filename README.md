@@ -41,7 +41,7 @@ Act accordingly for any other configuration file.
 * If `batch-import-marc-auth.sh` gives you
   ```
   FATAL [main] (Boot.java:215) - ERROR: Error while invoking main method in specified class: org.solrmarc.driver.IndexDriver
-java.lang.LinkageError: loader org.solrmarc.driver.Boot @3fee733d attempted duplicate interface definition for org.ini4j.Persistable. (org.ini4j.Persistable is in unnamed module of loader org.solrmarc.driver.Boot @3fee733d, parent loader 'app')
+  java.lang.LinkageError: loader org.solrmarc.driver.Boot @3fee733d attempted duplicate interface definition for org.ini4j.Persistable. (org.ini4j.Persistable is in unnamed module of loader org.solrmarc.driver.Boot @3fee733d, parent loader 'app')
   ```
   it means it messed up with paths.   
   Running `batch-import-marc.sh` from the directory where `import-marc.sh` should solve the issue (see examples above - `cd /opt/aksearch` and then `harvest/batch-import-marc.sh -m -d pathToTheMarcDir`).
