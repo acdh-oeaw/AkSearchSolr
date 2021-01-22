@@ -18,7 +18,7 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
 
 * If you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`.
-* If you want to import all files in a directory: `cd /opt/aksearch/harvest && ./batch-import-marc.sh -m -d pathToTheMarcDir`.  
+* If you want to import all files in a directory: `cd /opt/aksearch && harvest/batch-import-marc.sh -m -d pathToTheMarcDir`.  
   Be aware the `batch-import-marc.sh` script writes logs into `pathToTheMarcDir/log` directory by default and fails if it's unable to create/write to this dir. If you run into such trouble consider using the `-z` switch to turn off logging to files (and you will still get log on the console and you can redirect it to a file).
 
 Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch/harvest/batch-import-marc-auth.sh`, `/opt/aksearch/import-marc-auth.sh` and others).
@@ -35,4 +35,20 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 
 Act accordingly for any other configuration file.
 
-**Be aware in this configuration Solr works on port 8983** which might require adjusting of the `solr.hosturl` configuration property in your import.properties file.
+### Known issues
+
+* This image runs Solr on port 8983. If you are using your own `import.properties` file, you may need to adjust the `solr.hosturl` configuration property.
+* If `batch-import-marc-auth.sh` gives you
+  ```
+  FATAL [main] (Boot.java:215) - ERROR: Error while invoking main method in specified class: org.solrmarc.driver.IndexDriver
+java.lang.LinkageError: loader org.solrmarc.driver.Boot @3fee733d attempted duplicate interface definition for org.ini4j.Persistable. (org.ini4j.Persistable is in unnamed module of loader org.solrmarc.driver.Boot @3fee733d, parent loader 'app')
+  ```
+  it means it messed up with paths.   
+  Running `batch-import-marc.sh` from the directory where `import-marc.sh` should solve the issue (see examples above - `cd /opt/aksearch` and then `harvest/batch-import-marc.sh -m -d pathToTheMarcDir`).
+    * The precise reason is stated in logs a few lines above and looks more or less like that:
+      ```
+      DEBUG [main] (Boot.java:645) - Number of homeDirStrs: 3
+      DEBUG [main] (Boot.java:648) - homeDirStrs[0]: /usr/local/vufind/import
+      DEBUG [main] (Boot.java:652) - homeDirStrs[1]: /opt/aksearch/harvest/../import
+      ```
+      The issue here is that the third homeDirStrs (which isn't printed in the log) is the `import-marc.sh` directory and it duplicates with `/opt/aksearch/harvest/../import` leading to duplicated class imports.

@@ -1,0 +1,23 @@
+name: test
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: docker build -t aksearch-solr .
+    - name: prepare data
+      run: gunzip .github/workflows/marc.xml.gz
+    - name: run
+      run: |
+        docker run --name aksearch-solr -d -p 8983:8983 -v "$PWD/.github/workflows/marc.xml:/marc/marc.xml" aksearch-solr
+        sleep 5
+        curl -i -I http://127.0.0.1:8983/solr/
+    - name: import
+      run: docker exec -t aksearch-solr bash -c 'cd /opt/aksearch && ./import-marc.sh /marc/marc.xml'
+    - name: batch-import
+      run: docker exec -t aksearch-solr bash -c 'cd /opt/aksearch && harvest/batch-import-marc.sh -m -d -z /marc'
+
