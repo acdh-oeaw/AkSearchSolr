@@ -23,6 +23,18 @@ Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
 
 Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch/harvest/batch-import-marc-auth.sh`, `/opt/aksearch/import-marc-auth.sh` and others).
 
+### Importing sample MARC data
+
+* Login into running container, e.g. `docker exec -ti aksearch-solr bash`.
+* Download, decompress and import sample data:
+  ```bash
+  curl -L 'https://github.com/acdh-oeaw/AkSearchSolr/blob/main/.github/workflows/marc.xml.gz?raw=true' > /tmp/marc.xml.gz
+  gunzip /tmp/marc.xml.gz
+  cd /opt/aksearch && ./import-marc.sh /tmp/marc.xml
+  rm /tmp/marc.xml
+  ```
+* Exit the container with `exit`.
+
 ### Using own MARC import.properties
 
 Just mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g.:
