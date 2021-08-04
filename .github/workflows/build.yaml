@@ -8,12 +8,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build
-      run: docker build -t aksearch-solr .
+      run: docker build -t acdhch/aksearch-solr .
     - name: prepare data
       run: gunzip .github/workflows/marc.xml.gz
     - name: run
       run: |
-        docker run --name aksearch-solr -d -p 8983:8983 -v "$PWD/.github/workflows/marc.xml:/marc/marc.xml" aksearch-solr
+        docker run --name acdhch/aksearch-solr -d -p 8983:8983 -v "$PWD/.github/workflows/marc.xml:/marc/marc.xml" aksearch-solr
         sleep 5
         curl -i -I http://127.0.0.1:8983/solr/
     - name: import
