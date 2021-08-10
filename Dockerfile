@@ -13,4 +13,5 @@ RUN git clone --depth 1 https://biapps.arbeiterkammer.at/gitlab/open/aksearch/ak
     sed -i -e 's@:8080/solr/@:8983/solr/@g' /opt/aksearch/import/*properties &&\
     sed -i -e 's@^RUN_CMD="[$]JAVA @RUN_CMD="$JAVA $GC_TUNE @g' /opt/aksearch/import-marc.sh
 COPY aksearch.sh /docker-entrypoint-initdb.d/aksearch.sh
+COPY batch-import-marc-single.sh /opt/aksearch/harvest/batch-import-marc-single.sh
 

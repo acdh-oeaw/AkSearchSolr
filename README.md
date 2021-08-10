@@ -20,6 +20,7 @@ Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
 * If you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`.
 * If you want to import all files in a directory: `cd /opt/aksearch && harvest/batch-import-marc.sh -m -d pathToTheMarcDir`.  
   Be aware the `batch-import-marc.sh` script writes logs into `pathToTheMarcDir/log` directory by default and fails if it's unable to create/write to this dir. If you run into such trouble consider using the `-z` switch to turn off logging to files (and you will still get log on the console and you can redirect it to a file).
+    * The `/opt/aksearch && harvest/batch-import-marc-single.sh` wrapper assures the import isn't run until the previous one finished.
 
 Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch/harvest/batch-import-marc-auth.sh`, `/opt/aksearch/import-marc-auth.sh` and others).
 
