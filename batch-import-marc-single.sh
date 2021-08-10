@@ -1,5 +1,5 @@
 #!/bin/bash
-STATE=`ps ax | grep batch-import-marc | wc -l`
+STATE=`ps ax | grep batch-import-marc.sh | wc -l`
 echo "--------------------------------"
 date
 if [ "$STATE" == "1" ] ; then
