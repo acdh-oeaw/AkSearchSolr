@@ -1,6 +1,8 @@
 name: test
 
-on: push
+on:
+  push:
+    branches: [main]
 
 jobs:
   buildAndTest:
@@ -26,4 +28,3 @@ jobs:
         password: ${{ secrets.DOCKERHUBTOKEN }}
     - name: docker push
       run: docker push acdhch/aksearch-solr
-
