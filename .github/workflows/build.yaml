@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build
-      run: docker build -t acdhch/aksearch-solr .
+      run: docker build -t acdhch/aksearch-solr --label "buildUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" .
     - name: prepare data
       run: gunzip .github/workflows/marc.xml.gz
     - name: run
