@@ -36,6 +36,20 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```
 * Exit the container with `exit`.
 
+### Importing a given Alma record
+
+* Find Alma record's MMS_ID
+* Log into the running container as root, e.g. `docker exec -u root -ti aksearch-solr bash`.
+* Download the record over OAI-PMH skipping the OAI-PMH envelope:
+  ```bash
+  curl 'https://eu02.alma.exlibrisgroup.com/view/oai/43ACC_OEAW/request?metadataPrefix=marc21&verb=GetRecord&identifier=oai:alma.43ACC_OEAW:{MMS_ID}' | tail -n 2 | head -n 1 > /tmp/record.xml
+  ```
+  e.g.
+  ```bash
+  curl 'https://eu02.alma.exlibrisgroup.com/view/oai/43ACC_OEAW/request?metadataPrefix=marc21&verb=GetRecord&identifier=oai:alma.43ACC_OEAW:993516214704498' | tail -n 2 | head -n 1 > /tmp/record.xml
+  ```
+* Import the record with `/opt/aksearch/import-marc.sh /tmp/record.xml`
+
 ### Using own MARC import.properties
 
 Just mount it into the container and set the `VUFIND_LOCAL_DIR` environment variable in a way `$VUFIND_LOCAL_DIR/import/import.properties` points to your MARC import properties file, e.g.:
