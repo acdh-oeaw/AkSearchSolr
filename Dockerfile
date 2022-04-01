@@ -15,3 +15,4 @@ RUN git clone --depth 1 https://biapps.arbeiterkammer.at/gitlab/open/aksearch/ak
 COPY aksearch.sh /docker-entrypoint-initdb.d/aksearch.sh
 COPY batch-import-marc-single.sh /opt/aksearch/harvest/batch-import-marc-single.sh
 COPY local /opt/local
+COPY java_helpers/Oeaw.java /opt/aksearch/import/index_java/src/Oeaw.java
