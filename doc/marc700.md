@@ -42,9 +42,46 @@ Also a problem of multiple/no subfield occurences applies. We need to disaagrega
       `{field}` is just a MARC field number  
       `{ind1}` and `{ind2}` are indicator filters where `_` means "anything" and `#` means "not set"  
       `{value subfields}` is a list of subfields forming the MARC field value (they are merged using space as a separator and finally trimmed)  
-      `{repeat subfield}` is a subfield which count determines the number of times the value is repeated
+      `{repeat subfield}` is a subfield which count determines the number of times the value is repeated (but if the count is 0, the subfield will be repeated once anyway, to ensure that the author name is not skipped)
     * e.g. `author = custom, getRepeated(100|__|abcdg|4:700|_#|abcdg|4)`
+  * A second Java helper method – `getSubfieldAtLeastOnce({field}|{ind1}{ind2}|{value subfield}, {default value})` – was developed to index author roles, where:
+    * `{field}` is just a MARC field number  
+      `{ind1}` and `{ind2}` are indicator filters where `_` means "anything" and `#` means "not set"  
+      `{value subfield}` is the value of the subfield to be indexed (each instance of this subfield, even in the same field, will be indexed in a separate Solr field)  
+      `{default value}` is the value to be indexed when the subfield specified in `{value subfield}` is not found in a certain field
+    * e.g. `author2_role = custom, getSubfieldAtLeastOnce(700|_#|4, und)`
   * Our helper method source is in the `java_helpers/Oeaw.java` file which is copied into docker image's `/opt/aksearch/import/index_java/src/Oeaw.java`
     (where the indexer searches for the helper methods code) by the `Dockerfile`.
-    
 
+## Use case
+
+Given a MARC record with these fields:
+```
+700 $a Arguillère, Stéphane $4 trl $4 wst
+700 $a Smith, John
+700 $a Mustermann, Max $4 trl
+```
+
+and the following index specification:
+```
+author2 = custom, getRepeated(700|_#|abcdg|4)
+author2_role = custom, getSubfieldAtLeastOnce(700|_#|4, und)
+```
+the Solr index will be populated as follows.
+
+**author2**
+```
+Arguillère, Stéphane
+Arguillère, Stéphane
+Smith, John
+Mustermann, Max
+```
+
+**author2_role**
+```
+trl
+wst
+
+trl
+```
+(Of course, these values can be translated to more understandable definitions by specifying a translation map)
