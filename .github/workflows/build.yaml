@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   workflow_dispatch: ~
   
 jobs:
@@ -10,13 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: getBranch
+      run: |
+        TAG=${GITHUB_REF##*/}
+        if [ "$TAG" == "main" ] ; then TAG=latest ; fi
+        export TAG
     - name: build
-      run: docker build -t acdhch/aksearch-solr --label "buildUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" .
+      run: docker build -t acdhch/aksearch-solr:$TAG --label "buildUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" .
     - name: prepare data
       run: gunzip .github/workflows/marc.xml.gz
     - name: run
       run: |
-        docker run --name aksearch-solr -d -p 8983:8983 -v "$PWD/.github/workflows/marc.xml:/marc/marc.xml" acdhch/aksearch-solr
+        docker run --name aksearch-solr -d -p 8983:8983 -v "$PWD/.github/workflows/marc.xml:/marc/marc.xml" acdhch/aksearch-solr:$TAG
         sleep 5
         curl -i -I http://127.0.0.1:8983/solr/
     - name: import
@@ -28,5 +33,5 @@ jobs:
         username: zozlak
         password: ${{ secrets.DOCKERHUBTOKEN }}
     - name: docker push
-      run: docker push acdhch/aksearch-solr
+      run: docker push acdhch/aksearch-solr:$TAG
 
