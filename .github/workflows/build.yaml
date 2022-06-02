@@ -12,13 +12,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: get branch
       run: |
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
         TAG=${GITHUB_REF##*/}
         if [ "$TAG" == "main" ] ; then TAG=latest ; fi
         echo "TAG=$TAG" >> $GITHUB_ENV
-    - name: test
-      run: |
-        echo $GITHUB_REF
-        echo $TAG
     - name: build
       run: docker build -t acdhch/aksearch-solr:$TAG --label "buildUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" .
     - name: prepare data
