@@ -16,5 +16,6 @@ RUN git clone --depth 1 https://biapps.arbeiterkammer.at/gitlab/open/aksearch/ak
 RUN sed -i -e 's/lost+found/& ! -name .rmtab/' /opt/docker-solr/scripts/init-solr-home
 COPY aksearch.sh /docker-entrypoint-initdb.d/aksearch.sh
 COPY batch-import-marc-single.sh /opt/aksearch/harvest/batch-import-marc-single.sh
+COPY health_check_and_index.sh /opt/harvest/health_check_and_index.sh
 COPY local /opt/local
 COPY java_helpers/Oeaw.java /opt/aksearch/import/index_java/src/Oeaw.java
