@@ -10,11 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: getBranch
+    - name: get branch
       run: |
+        echo $GITHUB_REF
         TAG=${GITHUB_REF##*/}
         if [ "$TAG" == "main" ] ; then TAG=latest ; fi
         export TAG
+        export FOO="BAR"
+    - name: test
+      run: |
+        echo $GITHUB_REF
+        echo $FOO
     - name: build
       run: docker build -t acdhch/aksearch-solr:$TAG --label "buildUrl=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" .
     - name: prepare data
