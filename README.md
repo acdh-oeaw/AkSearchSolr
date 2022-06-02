@@ -36,6 +36,22 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```
 * Exit the container with `exit`.
 
+### Importing complete test dataset
+
+* Log into the running container as root, e.g. `docker exec -u root -ti aksearch-solr bash`.
+* Download the dataset over OAI-PMH using the `VuFindMinimal` set and make it look like the VuFind download script results:
+  ```bash
+  curl 'https://eu02.alma.exlibrisgroup.com/view/oai/43ACC_OEAW/request?metadataPrefix=marc21&verb=ListRecords&set=VuFindMinimal' | tail -n +5 | grep -v '^</metadata>' > /tmp/records.xml
+  echo "<collection>" > /tmp/records2.xml
+  cat /tmp/records.xml >> /tmp/records2.xml
+  echo "</collection>" >> /tmp/records2.xml
+  mv /tmp/records2.xml /tmp/records.xml
+  ```
+* Import the data with
+  ```bash
+  /opt/aksearch/import-marc.sh /tmp/records.xml
+  ```
+
 ### Importing a given Alma record
 
 * Find Alma record's MMS_ID
@@ -48,7 +64,10 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```bash
   curl 'https://eu02.alma.exlibrisgroup.com/view/oai/43ACC_OEAW/request?metadataPrefix=marc21&verb=GetRecord&identifier=oai:alma.43ACC_OEAW:993516214704498' | tail -n 2 | head -n 1 > /tmp/record.xml
   ```
-* Import the record with `/opt/aksearch/import-marc.sh /tmp/record.xml`
+* Import the record with
+  ```bash
+  /opt/aksearch/import-marc.sh /tmp/record.xml
+  ```
 
 ### Using own MARC import.properties
 
