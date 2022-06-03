@@ -81,6 +81,14 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 
 Act accordingly for any other configuration file.
 
+### Triggering full reindex
+
+If you want all data to be removed and reingested, run inside the docker container
+
+```bash
+/opt/harvest/oeaw_reindex.sh
+```
+
 ### Known issues
 
 * This image runs Solr on port 8983. If you are using your own `import.properties` file, you may need to adjust the `solr.hosturl` configuration property.
