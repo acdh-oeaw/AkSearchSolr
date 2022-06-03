@@ -3,8 +3,8 @@ USER root
 RUN apt update &&\
     apt install -y git openjdk-11-jdk-headless &&\
     apt clean &&\
-    mkdir /opt/aksearch &&\
-    chown $SOLR_USER /opt/aksearch
+    mkdir -p /opt/aksearch /opt/harvest &&\
+    chown $SOLR_USER /opt/aksearch /opt/harvest
 ENV VUFIND_LOCAL_DIR=/opt/local JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 GC_TUNE='-XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport -XX:MaxRAMFraction=1 -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:+UseStringDeduplication -XX:+ExitOnOutOfMemoryError'
 USER $SOLR_USER
 RUN git clone --depth 1 https://biapps.arbeiterkammer.at/gitlab/open/aksearch/aksearch.git /opt/aksearch &&\
