@@ -10,8 +10,7 @@ if [ "`find /opt/harvest/alma -maxdepth 0 -mmin -$DELAY`" == "" ] && [ "`find /o
     nohup /opt/aksearch/harvest/batch-import-marc-single.sh -d /opt/harvest/alma > /opt/harvest/alma.log 2>&1
 fi
 if [ "`find /opt/harvest/degruyter -maxdepth 0 -mmin -$DELAY`" == "" ] && [ "`find /opt/harvest/degruyter -maxdepth 1 -name *xml | wc -l`" != "0" ] ; then
-    #nohup /opt/aksearch/harvest/batch-import-marc-single.sh -d /opt/harvest/degruyter > /opt/harvest/degruyter.log 2>&1
-    echo "degruyter import not defined yet"
+    nohup /opt/aksearch/harvest/batch-import-marc-single.sh -d /opt/harvest/degruyter > /opt/harvest/degruyter.log 2>&1
 fi
 
 exit $RET
