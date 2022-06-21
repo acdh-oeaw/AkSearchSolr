@@ -11,7 +11,4 @@ curl --request GET -sL \
      --url 'http://localhost:8983/solr/biblio/update?stream.body=<delete><query>*:*</query></delete>&commit=true'
 
 echo "Starting Indexing"
-cd /opt/aksearch && harvest/batch-import-marc.sh -m -d /opt/harvest/$SET
-
-
-
+cd /opt/aksearch && harvest/batch-import-marc.sh -m -d -p /opt/local/import/import_$SET.properties /opt/harvest/$SET
