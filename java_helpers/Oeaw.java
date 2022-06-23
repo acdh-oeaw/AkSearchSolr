@@ -17,8 +17,14 @@ public class Oeaw {
             char ind2 = parts[1].charAt(1);
             String subfields = parts[2];
             String countSubfield = parts[3];
+            String defaultValue = parts.length >= 5 ? parts[4] : "";
             for (VariableField varField : record.getVariableFields(parts[0])) {
                 field = (DataField) varField;
+                // read and sanitize repetition
+                int count = field.getSubfields(countSubfield.charAt(0)).size();
+                if (count == 0) {
+                    count = 1;
+                }
                 // filter based on indicators
                 if (!(ind1 == '_' || ind1 == '#' && field.getIndicator1() == ' ' || ind1 == field.getIndicator1())) {
                     continue;
@@ -26,26 +32,55 @@ public class Oeaw {
                 if (!(ind2 == '_' || ind2 == '#' && field.getIndicator2() == ' ' || ind2 == field.getIndicator2())) {
                     continue;
                 }
-                // compose the value
-                String value = "";
-                for (int i = 0; i < subfields.length(); i++) {
-                    Subfield subfield = field.getSubfield(subfields.charAt(i));
-                    if (subfield != null) {
-                        value = value + subfield.getData().trim() + " ";
+                // handle linked field
+                int i = 0;
+                if (subfields.charAt(0) == '@') {
+                    i = 1;
+                    Subfield linkSubfield = field.getSubfield('6');
+                    if (linkSubfield != null) {
+                        String[] link = linkSubfield.getData().split("-");
+                        field = this.getLinkedField(record, link[0], field.getTag() + "-" + link[1]);
+                    } else {
+                        field = null;
                     }
                 }
-                value = value.trim();
-                // handle repetition
-                int count = field.getSubfields(countSubfield.charAt(0)).size();
-		if (count == 0) {
-                    count = 1;
+                // compose the value
+                String value = "";
+                if (field == null) {
+                    value = defaultValue;
+                } else {
+                    int n = 0;
+                    for (; i < subfields.length(); i++) {
+                        Subfield subfield = field.getSubfield(subfields.charAt(i));
+                        if (subfield != null) {
+                            value = value + subfield.getData().trim() + " ";
+                            n++;
+                        }
+                    }
+                    value = value.trim();
+                    if (n == 0) {
+                        value = defaultValue;
+                    }
                 }
-                for (int i = 0; i < count; i++) {
+                // handle repetition
+                for (int j = 0; j < count; j++) {
                     result.add(value);
                 }
             }
         }
         return result;
+    }
+
+    private DataField getLinkedField(Record record, String tag, String filter) {
+        DataField field;
+        for (VariableField varField : record.getVariableFields(tag)) {
+            field = (DataField) varField;
+            Subfield subfield = field.getSubfield('6');
+            if (subfield != null && (subfield.getData() == filter || subfield.getData().startsWith(filter + "/"))) {
+                return field;
+            }
+        }
+        return null;
     }
 
     public Collection<String> getSubfieldAtLeastOnce(Record record, String description, String defaultValue) {

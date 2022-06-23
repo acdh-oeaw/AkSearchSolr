@@ -21,6 +21,7 @@ Also a problem of multiple/no subfield occurences applies. We need to disaagrega
 * 993412310604498 - many author role subfields within single 700 field
 * 993498613504498, 993523208704498 - both author and title 700 fields
 * 993519804104498 - many authors
+* 990002457620504498 - linked fields (also with one missing link)
 
 ## Issues
 
@@ -46,7 +47,12 @@ Also a problem of multiple/no subfield occurences applies. We need to disaagrega
     * e.g. `author = custom, getRepeated(100|__|abcdg|4:700|_#|abcdg|4)`
   * Our helper method source is in the `java_helpers/Oeaw.java` file which is copied into docker image's `/opt/aksearch/import/index_java/src/Oeaw.java`
     (where the indexer searches for the helper methods code) by the `Dockerfile`.
-3. While extracting subfield values we need to be able to provide a default value when the subfield is missing.
+3. We need to handle linked fields in 2.  
+   When a value is in a linked field:
+   * The original field contains subfield `6` with a value `targetTag-uniqueId`, e.g. `880-03`.
+   * There is a linked field with a given tag and subfield `6` with values `srcTag-uniqueId` (e.g. `700-03`) or `srcTag-uniqueId/somethingElse` (e.g. `700-03/Jpn`).
+   * It is possible that not all fields have the `6` subfield. In such a case a default value should be used.
+4. While extracting subfield values we need to be able to provide a default value when the subfield is missing.
    * This is done by the second Java helper method - `getSubfieldAtLeastOnce({field}|{ind1}{ind2}|{value subfield}, {default value})`, where:
     * `{field}` is just a MARC field number  
       `{ind1}` and `{ind2}` are indicator filters where `_` means "anything" and `#` means "not set"  
@@ -62,12 +68,14 @@ Given a MARC record with these fields:
 ```
 700 $a Arguillère, Stéphane $4 trl $4 wst
 700 $a Smith, John
-700 $a Mustermann, Max $4 trl
+700 $a Mustermann, Max $4 trl $6 880-01
+880 $a Foo, Bar $6 700-01
 ```
 
 the following index specification:
 ```
 author2 = custom, getRepeated(700|_#|abcdg|4)
+author2_original-writing_str_mv = custom, getRepeated(700|_#|@abcdg|4|noLinkedField)
 author2_role = custom, getSubfieldAtLeastOnce(700|_#|4, und)
 ```
 the Solr index will be populated as follows.
@@ -78,6 +86,13 @@ Arguillère, Stéphane
 Arguillère, Stéphane
 Smith, John
 Mustermann, Max
+```
+
+**author2_original-writing_str_mv**
+```
+noLinkedField
+noLinkedField
+Foo, Bar
 ```
 
 **author2_role**
