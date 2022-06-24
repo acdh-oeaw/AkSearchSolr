@@ -1,7 +1,7 @@
 FROM solr:7
 USER root
 RUN apt update &&\
-    apt install -y git openjdk-11-jdk-headless &&\
+    apt install -y git openjdk-11-jdk-headless vim &&\
     apt clean &&\
     mkdir -p /opt/aksearch /opt/harvest &&\
     chown $SOLR_USER /opt/aksearch /opt/harvest
