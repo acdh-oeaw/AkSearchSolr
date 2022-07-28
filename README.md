@@ -13,6 +13,10 @@ Run with with e.g.:
 docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhch/aksearch-solr
 ```
 
+## Solr memory
+
+Use `SOLR_JAVA_MEM`, `GC_TUNE` and `OOM` environment variables to tune Solr memory management. See [default values defined in the Dockerfile](https://github.com/acdh-oeaw/AkSearchSolr/blob/main/Dockerfile#L8).
+
 ## Importing MARC data
 
 Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
