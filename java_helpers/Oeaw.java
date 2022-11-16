@@ -116,7 +116,7 @@ public class Oeaw {
     }
 
     public Collection<String> skipTagsAndSort(Collection<String> input, String skipContent) {
-        java.util.TreeMap<String, String> output = new TreeMap<String, String>();
+        TreeMap<String, String> output = new TreeMap<String, String>();
         for (String item : input) {
             output.put(
                 item.replaceAll("<<[^>]*>> *", ""),
@@ -124,6 +124,14 @@ public class Oeaw {
             );
         }
         return skipContent.equals("true") ? (Collection<String>) (Collection<?>) output.keySet() : output.values();
+    }
+
+    public Collection<String> skipTagsFromFullRecord(Collection<String> input) {
+        LinkedList<String> output = new LinkedList<String>();
+        for (String item : input) {
+            output.add(item.replaceAll("&lt;&lt;", "").replaceAll("&gt;&gt;", ""));
+        }
+        return output;
     }
 }
 

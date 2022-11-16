@@ -28,6 +28,7 @@ There are two possible approaches to handle this issue:
 * Handle it during the indexing by creation of two "sibling" properties
   * The value(s) to be used for sorting (with `<<part to omit>>` skipped).
   * The value(s) to be used for display (with `<<` and `>>` removed).
+  In this case we would also like to skip the `<<` and `>>` tags from the _fullrecord_ solr property storing the whole record as an MARC XML.
 
 The problem with the first approach is that it for handling search results paging it would require the GUI to fetch a complete set of results
 because the right sorting can be done only on the GUI side. This is, pretty obviously, not feasible.
@@ -39,11 +40,16 @@ to strip `<<` and `>>` but this approach doesn't assure proper sorting.
 
 # Solution
 
-Develop a custom `skipTagsAndSort(skipContent)` indexer mapping method (see the `{repoRoot}/java_helpers/Oeaw.java`) which can be applied as a postprocessing filter to any extracted field.
+Develop custom indexer mapping methods (see the `{repoRoot}/java_helpers/Oeaw.java`):
+
+* `skipTagsAndSort(skipContent)` to be applied as a postprocessing filter to any extracted field.
+* `skipTagsFromFullRecord()` to be applied to the _fullrecord_ solr field.
 
 Usage examples:
 
 ```
+fullrecord = FullRecordAsXML, custom_map(Oeaw skipTagsFromFullRecord)
+
 someFieldToDisplay = custom, getAuthorsFilteredByRelator(110abg:111abcg:710abg:711abg,110:111:710:711,firstAuthorRoles|secondAuthorRoles), custom_map(Oeaw skipTagsAndSort(false))
 someFieldToSort = custom, getAuthorsFilteredByRelator(110abg:111abcg:710abg:711abg,110:111:710:711,firstAuthorRoles|secondAuthorRoles), custom_map(Oeaw skipTagsAndSort(true))
 
