@@ -55,7 +55,19 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```bash
   /opt/aksearch/import-marc.sh /tmp/records.xml
   ```
-
+* Alternatively you can harvest the set via OAI-PMH (in the [AkSearchWeb Container](https://github.com/acdh-oeaw/AkSearchWeb#harvesting-with-oai-pmh))
+  ```bash
+  /var/www/vufind/harvest/harvest_oai.sh bib_almamin
+  ```
+* And subsequently import it with the batch import script (back here in the AkSearchSolr):
+  ```bash
+  cd /opt/aksearch && harvest/batch-import-marc.sh -m -d -p /opt/local/import/import_bib_almamin.properties /opt/harvest/bib_almamin
+  # note that the -m flag set here will not move the data after indexing
+  ```
+* The full_reindex.sh script will clear the core and trigger an import with the options set above
+  ```bash
+  /opt/local/full_reindex.sh bib_almamin
+  ```
 ### Importing a given Alma record
 
 * Find Alma record's MMS_ID
