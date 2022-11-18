@@ -42,7 +42,7 @@ Also a problem of multiple/no subfield occurences applies. We need to disaagrega
     * `singleFieldSpec` has `{field}|{ind1}{ind2}|{value subfields}|{repeat subfield}` format, where:  
       `{field}` is just a MARC field number  
       `{ind1}` and `{ind2}` are indicator filters where `_` means "anything" and `#` means "not set"  
-      `{value subfields}` is a list of subfields forming the MARC field value (they are merged using space as a separator and finally trimmed)  
+      `{value subfields}` is a list of subfields forming the MARC field value (they are merged using space as a separator and finally trimmed). If you add `@` before the list (for example, `@abcdg`), the method will fetch the linked *880* fields (containing the original writing) instead of the regular ones. 
       `{repeat subfield}` is a subfield which count determines the number of times the value is repeated (**but if the count is 0, the value must be returned once** to avoid skipping authors with undefined roles)
     * e.g. `author = custom, getRepeated(100|__|abcdg|4:700|_#|abcdg|4)`
   * Our helper method source is in the `java_helpers/Oeaw.java` file which is copied into docker image's `/opt/aksearch/import/index_java/src/Oeaw.java`
