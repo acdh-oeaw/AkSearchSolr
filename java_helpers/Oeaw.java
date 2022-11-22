@@ -1,6 +1,7 @@
 import java.util.Collection;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.TreeMap;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Subfield;
@@ -101,17 +102,36 @@ public class Oeaw {
                 if (!(ind2 == '_' || ind2 == '#' && field.getIndicator2() == ' ' || ind2 == field.getIndicator2())) {
                     continue;
                 }
-		boolean hit = false;
+                boolean hit = false;
                 for (Subfield subfield : field.getSubfields(subfieldCode)) {
                     result.add(subfield.getData().trim());
-		    hit = true;
-		}
+                    hit = true;
+                }
                 if (!hit) {
                     result.add(defaultValue);
                 }
             }
         }
         return result;
+    }
+
+    public Collection<String> skipTagsAndSort(Collection<String> input, String skipContent) {
+        TreeMap<String, String> output = new TreeMap<String, String>();
+        for (String item : input) {
+            output.put(
+                item.replaceAll("<<[^>]*>> *", ""),
+                item.replaceAll("<<|>>", "")
+            );
+        }
+        return skipContent.equals("true") ? (Collection<String>) (Collection<?>) output.keySet() : output.values();
+    }
+
+    public Collection<String> skipTagsFromFullRecord(Collection<String> input) {
+        LinkedList<String> output = new LinkedList<String>();
+        for (String item : input) {
+            output.add(item.replaceAll("&lt;&lt;", "").replaceAll("&gt;&gt;", ""));
+        }
+        return output;
     }
 }
 
