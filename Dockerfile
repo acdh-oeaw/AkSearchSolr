@@ -10,7 +10,7 @@ USER $SOLR_USER
 RUN git clone --depth 1 https://github.com/ctot-nondef/AkSearch.git /opt/aksearch &&\
     ln -s /opt/solr /opt/aksearch/solr/vendor &&\
     sed -i -e 's@../../vendor/@/opt/solr/@g' /opt/aksearch/solr/vufind/biblio/conf/solrconfig.xml &&\
-    sed -i -e 's@<indexConfig>$@<indexConfig>\n    <lockType>single</lockType>\n@g' /opt/aksearch/solr/vufind/biblio/conf/solrconfig.xml &&\
+    #sed -i -e 's@<indexConfig>$@<indexConfig>\n    <lockType>single</lockType>\n@g' /opt/aksearch/solr/vufind/biblio/conf/solrconfig.xml &&\
     sed -i -e 's@:8080/solr/@:8983/solr/@g' /opt/aksearch/import/*properties &&\
     sed -i -e 's@^RUN_CMD="[$]JAVA @RUN_CMD="$JAVA $GC_TUNE @g' /opt/aksearch/import-marc.sh
 # to be able to run on ACDH cluster with SOLR_HOME being an NFS mount with the .rmtab
