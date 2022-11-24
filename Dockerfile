@@ -7,7 +7,7 @@ RUN apt update &&\
     chown $SOLR_USER /opt/aksearch /opt/harvest
 ENV VUFIND_LOCAL_DIR=/opt/local JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 SOLR_JAVA_MEM='-Xms2g' OOM=script GC_TUNE='-XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport -XX:MaxRAMFraction=1 -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:+UseStringDeduplication'
 USER $SOLR_USER
-RUN git clone --depth 1 https://github.com/ctot-nondef/AkSearch.git /opt/aksearch &&\
+RUN git clone --depth 1 https://github.com/acdh-oeaw/aksearch.git /opt/aksearch &&\
     ln -s /opt/solr /opt/aksearch/solr/vendor &&\
     sed -i -e 's@../../vendor/@/opt/solr/@g' /opt/aksearch/solr/vufind/biblio/conf/solrconfig.xml &&\
     sed -i -e 's@<indexConfig>$@<indexConfig>\n    <lockType>single</lockType>\n@g' /opt/aksearch/solr/vufind/biblio/conf/solrconfig.xml &&\
