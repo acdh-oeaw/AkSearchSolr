@@ -126,6 +126,20 @@ public class Oeaw {
         return skipContent.equals("true") ? (Collection<String>) (Collection<?>) output.keySet() : output.values();
     }
 
+    public Collection<String> skipTags(Collection<String> input, String skipContent) {
+        LinkedList<String> output = new LinkedList<String>();
+        if (skipContent.equals("true")) {
+            for (String item : input) {
+                output.add(item.replaceAll("<<[^>]*>> *", ""));
+            }
+        } else {
+            for (String item : input) {
+                output.add(item.replaceAll("<<|>>", ""));
+            }
+        }
+        return output;
+    }
+
     public Collection<String> skipTagsFromFullRecord(Collection<String> input) {
         LinkedList<String> output = new LinkedList<String>();
         for (String item : input) {
