@@ -42,7 +42,8 @@ to strip `<<` and `>>` but this approach doesn't assure proper sorting.
 
 Develop custom indexer mapping methods (see the `{repoRoot}/java_helpers/Oeaw.java`):
 
-* `skipTagsAndSort(skipContent)` to be applied as a postprocessing filter to any extracted field.
+* `skipTagsAndSort(skipContent)` to be applied as a postprocessing filter to any extracted field if solr index values should be sorted.
+* `skipTags(skipContent)` to be applied as a postprocessing filter to any extracted field if solr index values should preserve order from the MARC record.
 * `skipTagsFromFullRecord()` to be applied to the _fullrecord_ solr field.
 
 Usage examples:
