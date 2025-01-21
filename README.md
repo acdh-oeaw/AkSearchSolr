@@ -13,6 +13,18 @@ Run with with e.g.:
 docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/server/solr/mycores acdhch/aksearch-solr
 ```
 
+## Updating Solr config to a new Vufind version
+
+This is to be done in the https://github.com/acdh-oeaw/aksearch repository:
+
+* Clone the https://github.com/acdh-oeaw/aksearch and the https://github.com/vufind-org/vufind repositories
+* Copy the `solr/vufind` directory content from the vufind-org/vufind repository to the acdh-oeaw/aksearch one.
+* Inspect changes looking for aksearch overrides dropped by the vufind config,
+  e.g. dropped fields in the `solr/vufind/biblio/conf/schema.xml` or dropped stopwords in the `solr/vufind/biblio/conf/stopwords.txt`.
+  Restore what should be restored.
+* Repeat two previous steps with the `import` directory.
+* Commit and push the acdh-oeaw/aksearch repo.
+
 ## Solr memory
 
 Use `SOLR_JAVA_MEM`, `GC_TUNE` and `OOM` environment variables to tune Solr memory management. See [default values defined in the Dockerfile](https://github.com/acdh-oeaw/AkSearchSolr/blob/main/Dockerfile#L8).
