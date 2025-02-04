@@ -26,9 +26,9 @@ jobs:
         sleep 5
         curl -i -I http://127.0.0.1:8983/solr/
     - name: import
-      run: docker exec -t aksearch-solr bash -c 'cd /opt/aksearch && ./import-marc.sh /marc/marc.xml'
+      run: docker exec -t aksearch-solr bash -c 'cd /opt/vufind && ./import-marc.sh /marc/marc.xml'
     - name: batch-import
-      run: docker exec -t aksearch-solr bash -c 'cd /opt/aksearch && harvest/batch-import-marc.sh -m -d -z /marc'
+      run: docker exec -t aksearch-solr bash -c 'cd /opt/vufind && harvest/batch-import-marc.sh -m -d -z /marc'
     - uses: docker/login-action@v1
       with:
         username: zozlak

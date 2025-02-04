@@ -19,6 +19,5 @@ RUN git clone --depth 1 -b v10.1.1 https://github.com/vufind-org/vufind.git /opt
     sed -i -e 's@:8080/solr/@:8983/solr/@g' /opt/vufind/import/*properties &&\
     sed -i -e 's@^RUN_CMD="[$]JAVA @RUN_CMD="$JAVA $GC_TUNE @g' /opt/vufind/import-marc.sh
 COPY init_solr.sh /docker-entrypoint-initdb.d/init_solr.sh
-COPY vufind/* /opt/vufind/
-COPY harvest/* /opt/harvest/
+COPY vufind /opt/vufind
 COPY local /opt/local
