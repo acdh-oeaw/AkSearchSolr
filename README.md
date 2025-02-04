@@ -2,10 +2,13 @@
 
 Docker image of a Solr instance ready to be used as an [AkSearch](https://biapps.arbeiterkammer.at/gitlab/open/aksearch/aksearch) Solr backend and MARC data import environment.
 
-As in `solr:7` the Solr is installed in `/opt/solr/server/solr`.
+The Solr is installed in `/opt/solr/server/solr`.
 
-AkSearch repository is cloned into `/opt/aksearch`. 
-`/opt/aksearch/import/*properties` files have Solr port fixed (AkSearch assumes Solr works on port 8080 while by default it works on 8983).
+The VuFind repository is cloned into `/opt/vufind` with following local overrides and additions:
+
+* `vufind` dir content is copied to `/opt/vufind/`
+* `harvest` dir content is copied to `/opt/harvest/`
+* `local` dir content is copied to `/opt/local`
 
 Run with with e.g.:
 
@@ -15,15 +18,12 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
 
 ## Updating Solr config to a new Vufind version
 
-This is to be done in the https://github.com/acdh-oeaw/aksearch repository:
-
-* Clone the https://github.com/acdh-oeaw/aksearch and the https://github.com/vufind-org/vufind repositories
-* Copy the `solr/vufind` directory content from the vufind-org/vufind repository to the acdh-oeaw/aksearch one.
-* Inspect changes looking for aksearch overrides dropped by the vufind config,
+* Clone the https://github.com/vufind-org/vufind repositories
+* Copy the `vufind/solr` directory content from this repository into the `solr` directory of the just-cloned vufind-org/vufind repository.
+* Inspect changes looking for our own overrides,
   e.g. dropped fields in the `solr/vufind/biblio/conf/schema.xml` or dropped stopwords in the `solr/vufind/biblio/conf/stopwords.txt`.
   Restore what should be restored.
-* Repeat two previous steps with the `import` directory.
-* Commit and push the acdh-oeaw/aksearch repo.
+* Repeat two previous steps with the `vufind/import` directory.
 
 ## Solr memory
 
@@ -33,12 +33,12 @@ Use `SOLR_JAVA_MEM`, `GC_TUNE` and `OOM` environment variables to tune Solr memo
 
 Enter container, e.g. with `docker exec -ti aksearch-solr bash` and:
 
-* If you want to import a single file: `cd /opt/aksearch && ./import-marc.sh pathToTheMarcFile`.
-* If you want to import all files in a directory: `cd /opt/aksearch && harvest/batch-import-marc.sh -m -d pathToTheMarcDir`.  
+* If you want to import a single file: `cd /opt/vufind && ./import-marc.sh pathToTheMarcFile`.
+* If you want to import all files in a directory: `cd /opt/vufind && harvest/batch-import-marc.sh -m -d pathToTheMarcDir`.  
     *  Be aware the `batch-import-marc.sh` script writes logs into `pathToTheMarcDir/log` directory by default and fails if it's unable to create/write to this dir. If you run into such trouble consider using the `-z` switch to turn off logging to files (and you will still get log on the console and you can redirect it to a file).
-    * The `/opt/aksearch/harvest/batch-import-marc-single.sh` wrapper assures the import isn't run until the previous one finished.
+    * The `/opt/vufind/harvest/batch-import-marc-single.sh` wrapper assures the import isn't run until the previous one finished.
 
-Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch/harvest/batch-import-marc-auth.sh`, `/opt/aksearch/import-marc-auth.sh` and others).
+Similarly you can use other import scripts shipped with AkSearch (`/opt/vufind/harvest/batch-import-marc-auth.sh`, `/opt/vufind/import-marc-auth.sh` and others).
 
 ### Importing sample MARC data
 
@@ -47,7 +47,7 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```bash
   curl -L 'https://github.com/acdh-oeaw/AkSearchSolr/blob/main/.github/workflows/marc.xml.gz?raw=true' > /tmp/marc.xml.gz
   gunzip /tmp/marc.xml.gz
-  cd /opt/aksearch && ./import-marc.sh /tmp/marc.xml
+  cd /opt/vufind && ./import-marc.sh /tmp/marc.xml
   rm /tmp/marc.xml
   ```
 * Exit the container with `exit`.
@@ -65,7 +65,7 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```
 * Import the data with
   ```bash
-  /opt/aksearch/import-marc.sh /tmp/records.xml
+  /opt/vufind/import-marc.sh /tmp/records.xml
   ```
 * Alternatively you can harvest the set via OAI-PMH (in the [AkSearchWeb Container](https://github.com/acdh-oeaw/AkSearchWeb#harvesting-with-oai-pmh))
   ```bash
@@ -73,7 +73,7 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```
 * And subsequently import it with the batch import script (back here in the AkSearchSolr):
   ```bash
-  cd /opt/aksearch && harvest/batch-import-marc.sh -m -d -p /opt/local/import/import_bib_almamin.properties /opt/harvest/bib_almamin
+  cd /opt/vufind && harvest/batch-import-marc.sh -m -d -p /opt/local/import/import_bib_almamin.properties /opt/harvest/bib_almamin
   # note that the -m flag set here will not move the data after indexing
   ```
 * The full_reindex.sh script will clear the core and trigger an import with the options set above
@@ -94,7 +94,7 @@ Similarly you can use other import scripts shipped with AkSearch (`/opt/aksearch
   ```
 * Import the record with
   ```bash
-  /opt/aksearch/import-marc.sh /tmp/record.xml
+  /opt/vufind/import-marc.sh /tmp/record.xml
   ```
 
 ### Using own MARC import.properties
@@ -107,7 +107,9 @@ docker run --name aksearch-solr -d -p 8983:8983 -v aksearch-solrdata:/opt/solr/s
   acdhch/aksearch-solr
 ```
 
-Act accordingly for any other configuration file.
+Adjust accordingly for any other configuration file.
+
+If you want to persist your file in this image, save your `import.properties` as `local/import/import.properties` in this repository.
 
 ### Triggering full reindex
 
@@ -126,11 +128,11 @@ If you want all data to be removed and reingested, run inside the docker contain
   java.lang.LinkageError: loader org.solrmarc.driver.Boot @3fee733d attempted duplicate interface definition for org.ini4j.Persistable. (org.ini4j.Persistable is in unnamed module of loader org.solrmarc.driver.Boot @3fee733d, parent loader 'app')
   ```
   it means it messed up with paths.   
-  Running `batch-import-marc.sh` from the directory where `import-marc.sh` should solve the issue (see examples above - `cd /opt/aksearch` and then `harvest/batch-import-marc.sh -m -d pathToTheMarcDir`).
+  Running `batch-import-marc.sh` from the directory where `import-marc.sh` should solve the issue (see examples above - `cd /opt/vufind` and then `harvest/batch-import-marc.sh -m -d pathToTheMarcDir`).
     * The precise reason is stated in logs a few lines above and looks more or less like that:
       ```
       DEBUG [main] (Boot.java:645) - Number of homeDirStrs: 3
       DEBUG [main] (Boot.java:648) - homeDirStrs[0]: /usr/local/vufind/import
-      DEBUG [main] (Boot.java:652) - homeDirStrs[1]: /opt/aksearch/harvest/../import
+      DEBUG [main] (Boot.java:652) - homeDirStrs[1]: /opt/vufind/harvest/../import
       ```
-      The issue here is that the third homeDirStrs (which isn't printed in the log) is the `import-marc.sh` directory and it duplicates with `/opt/aksearch/harvest/../import` leading to duplicated class imports.
+      The issue here is that the third homeDirStrs (which isn't printed in the log) is the `import-marc.sh` directory and it duplicates with `/opt/vufind/harvest/../import` leading to duplicated class imports.
