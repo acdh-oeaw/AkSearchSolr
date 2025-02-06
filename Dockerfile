@@ -2,11 +2,7 @@ FROM solr:9.5
 USER root
 RUN apt update &&\
     apt install -y git default-jdk-headless vim &&\
-    apt clean &&\
-    mkdir -p /opt/vufind /opt/harvest &&\
-    chown $SOLR_USER /opt/vufind /opt/harvest
-ENV VUFIND_LOCAL_DIR=/opt/local JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 SOLR_JAVA_MEM='-Xms2g' OOM=script GC_TUNE='-XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport -XX:MaxRAMFraction=1 -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:+UseStringDeduplication'
-USER $SOLR_USER
+    apt clean
 RUN git clone --depth 1 -b v10.1.1 https://github.com/vufind-org/vufind.git /opt/vufind &&\
     ln -s /opt/solr /opt/vufind/solr/vendor &&\
     # solr in the solr:9 image refuses to load jars from /opt/vufind/(...) so we can just put all of them into $SOLR_HOME/jars\
@@ -21,3 +17,7 @@ RUN git clone --depth 1 -b v10.1.1 https://github.com/vufind-org/vufind.git /opt
 COPY init_solr.sh /docker-entrypoint-initdb.d/init_solr.sh
 COPY vufind /opt/vufind
 COPY local /opt/local
+RUN mkdir /opt/harvest &&\
+    chown -R $SOLR_USER /opt/vufind /opt/harvest /opt/local /opt/solr*
+ENV VUFIND_LOCAL_DIR=/opt/local JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 SOLR_JAVA_MEM='-Xms2g' OOM=script GC_TUNE='-XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport -XX:MaxRAMFraction=1 -XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:+UseStringDeduplication'
+USER $SOLR_USER
