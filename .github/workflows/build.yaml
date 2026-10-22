@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, dev, vufind10]
   workflow_dispatch: ~
 
 env:
@@ -49,6 +49,7 @@ jobs:
             docker push $IMAGE:latest
         fi
     - name: redeploy
+      if: github.ref_name != 'vufind10'
       run: |
         NMSP=oeaw-resources-dev
         # yes, fv10 is a typo but recreating a namespace in rancher is too much work to fix it
